@@ -3,11 +3,17 @@
 #+BEGIN_SRC emacs-lisp :exports none  :results none :eval always
   (require 'ox-extra)
   (ox-extras-activate '(latex-header-blocks ignore-headlines))
-  (setq org-latex-pdf-process
-        '("pdflatex -interaction nonstopmode -output-directory %o %f"
-          "bibtex %b"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+  ;; (setq org-latex-pdf-process
+  ;;       '("pdflatex -interaction nonstopmode -output-directory %o %f"
+  ;;         "biber %b"
+  ;;         "pdflatex -interaction nonstopmode -output-directory %o %f"
+  ;;         "pdflatex -interaction nonstopmode -output-directory %o %f"))
+
+  (setq org-latex-pdf-process '("%latex -interaction nonstopmode -output-directory %o %f"
+                                "%bib %b"
+                                "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                                "%latex -shell-escape -interaction nonstopmode -output-directory %o %f")
+        org-latex-compiler "pdflatex")
   (setq org-latex-with-hyperref nil) ;; stop org adding hypersetup{author..} to latex export
   ;; (setq org-latex-prefer-user-labels t)
 
@@ -66,12 +72,15 @@
 #+LATEX_HEADER: \usepackage[bottom]{footmisc}
 *** Bibliography
 # #+LATEX_HEADER: \DeclareNameAlias{sortname}{last-first}
+# #+LATEX_HEADER: \DeclareNameAlias{sortname}{given-family}
+# #+LATEX_HEADER: \addbibresource{aidan.bib}
+# #+LATEX_HEADER: \usepackage{biblatex}
+#+LATEX_HEADER: \usepackage[style=trad-abbrv,sorting=none,sortcites=true,doi=false,url=false,giveninits=true,hyperref]{biblatex}
 #+LATEX_HEADER: \DeclareNameAlias{sortname}{given-family}
 #+LATEX_HEADER: \addbibresource{aidan.bib}
 # #+LATEX_HEADER: \usepackage[citestyle=numeric-comp, maxcitenames=1, maxbibnames=4, doi=false, isbn=false, eprint=true, backend=bibtex, hyperref=true, url=false, natbib=true]{biblatex}
 # #+LATEX_HEADER: \usepackage[backend=biber, sorting=nyvt, style=authoryear, firstinits]{biblatex}
 # #+LATEX_HEADER: \usepackage[backend=natbib, giveninits=true]{biblatex}
-#+LATEX_HEADER: \usepackage[style=trad-abbrv,sorting=none,sortcites=true,doi=false,url=false,giveninits=true,hyperref]{biblatex}
 
 ** Exporter Settings
 #+AUTHOR: Aidan Scannell
@@ -102,8 +111,8 @@
   \location{Bristol, UK}
   \github{aidanscannell}
   \linkedin{aidan-scannell-82522789/}
-  \dob{22 April 1994}
-  \driving{UK Driving Licence}
+  % \dob{22 April 1994}
+  % \driving{UK Driving Licence}
 }
 \makecvheader
 #+end_export
@@ -189,7 +198,7 @@ Alongside my PhD I have assisted teaching:
 % \divider
 % \printbibliography[heading=pubtype,title={\printinfo{\faFile*[regular]}{Journal Articles}},type=article]
 % \divider
-\printbibliography[heading=pubtype,title={\printinfo{\faUsers}{Conference Proceedings}},type=inproceedings]
+\printbibliography[title={\printinfo{\faUsers}{Conference Proceedings}},type=inproceedings]
 #+end_export
 
 ** Projects
