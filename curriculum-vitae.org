@@ -1,51 +1,65 @@
 * Config/Preamble :noexport:
 ** LaTeX Config
 #+BEGIN_SRC emacs-lisp :exports none  :results none :eval always
-(setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf")))
-(add-to-list 'org-latex-classes
-             '("altacv" "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+  (require 'ox-extra)
+  (ox-extras-activate '(latex-header-blocks ignore-headlines))
+  (setq org-latex-pdf-process
+        '("pdflatex -interaction nonstopmode -output-directory %o %f"
+          "bibtex %b"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+  (setq org-latex-with-hyperref nil) ;; stop org adding hypersetup{author..} to latex export
+  ;; (setq org-latex-prefer-user-labels t)
 
-% Change the page layout if you need to
-\\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+  (unless (boundp 'org-latex-classes)
+    (setq org-latex-classes nil))
 
-% Use roboto and lato for fonts
-\\renewcommand{\\familydefault}{\\sfdefault}
+  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf")))
 
-% Change the colours if you want to
-\\definecolor{SlateGrey}{HTML}{2E2E2E}
-\\definecolor{LightGrey}{HTML}{666666}
-\\definecolor{DarkPastelRed}{HTML}{450808}
-\\definecolor{PastelRed}{HTML}{8F0D0D}
-\\definecolor{GoldenEarth}{HTML}{E7D192}
-\\colorlet{name}{black}
-\\colorlet{tagline}{PastelRed}
-\\colorlet{heading}{DarkPastelRed}
-\\colorlet{headingrule}{GoldenEarth}
-\\colorlet{subheading}{PastelRed}
-\\colorlet{accent}{PastelRed}
-\\colorlet{emphasis}{SlateGrey}
-\\colorlet{body}{LightGrey}
+  (add-to-list 'org-latex-classes
+               '("altacv" "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
 
-% Change some fonts, if necessary
-\\renewcommand{\\namefont}{\\Huge\\rmfamily\\bfseries}
-\\renewcommand{\\personalinfofont}{\\footnotesize}
-\\renewcommand{\\cvsectionfont}{\\LARGE\\rmfamily\\bfseries}
-\\renewcommand{\\cvsubsectionfont}{\\large\\bfseries}
+  % Change the page layout if you need to
+  \\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
 
-% Change the bullets for itemize and rating marker
-% for \cvskill if you want to
-\\renewcommand{\\itemmarker}{{\\small\\textbullet}}
-\\renewcommand{\\ratingmarker}{\\faCircle}
-"
+  % Use roboto and lato for fonts
+  \\renewcommand{\\familydefault}{\\sfdefault}
 
-               ("\\cvsection{%s}" . "\\cvsection*{%s}")
-               ("\\cvevent{%s}" . "\\cvevent*{%s}")))
-(setq org-latex-packages-alist 'nil)
-(setq org-latex-default-packages-alist
-      '(("rm" "roboto"  t)
-        ("defaultsans" "lato" t)
-        ("" "paracol" t)
-        ))
+  % Change the colours if you want to
+  \\definecolor{SlateGrey}{HTML}{2E2E2E}
+  \\definecolor{LightGrey}{HTML}{666666}
+  \\definecolor{DarkPastelRed}{HTML}{450808}
+  \\definecolor{PastelRed}{HTML}{8F0D0D}
+  \\definecolor{GoldenEarth}{HTML}{E7D192}
+  \\colorlet{name}{black}
+  \\colorlet{tagline}{PastelRed}
+  \\colorlet{heading}{DarkPastelRed}
+  \\colorlet{headingrule}{GoldenEarth}
+  \\colorlet{subheading}{PastelRed}
+  \\colorlet{accent}{PastelRed}
+  \\colorlet{emphasis}{SlateGrey}
+  \\colorlet{body}{LightGrey}
+
+  % Change some fonts, if necessary
+  \\renewcommand{\\namefont}{\\Huge\\rmfamily\\bfseries}
+  \\renewcommand{\\personalinfofont}{\\footnotesize}
+  \\renewcommand{\\cvsectionfont}{\\LARGE\\rmfamily\\bfseries}
+  \\renewcommand{\\cvsubsectionfont}{\\large\\bfseries}
+
+  % Change the bullets for itemize and rating marker
+  % for \cvskill if you want to
+  \\renewcommand{\\itemmarker}{{\\small\\textbullet}}
+  \\renewcommand{\\ratingmarker}{\\faCircle}
+  "
+
+                 ("\\cvsection{%s}" . "\\cvsection*{%s}")
+                 ("\\cvevent{%s}" . "\\cvevent*{%s}")))
+  (setq org-latex-packages-alist 'nil)
+  (setq org-latex-default-packages-alist
+        '(("rm" "roboto"  t)
+          ("defaultsans" "lato" t)
+          ("" "paracol" t)
+          ))
 #+END_SRC
 #+LATEX_CLASS: altacv
 #+LATEX_HEADER: \columnratio{0.6} % Set the left/right column width ratio to 6:4.
@@ -68,6 +82,7 @@
 #+MACRO: cvachievement \cvachievement{$1}{$2}{$3}{$4}
 #+MACRO: cvtag \cvtag{$1}
 #+MACRO: divider \divider
+#+MACRO: par \par
 #+MACRO: par-div \par\divider
 #+MACRO: new-page \newpage
 * CV Header :ignore:
@@ -123,8 +138,9 @@ Researching methods for data-efficient learning and control in multimodal dynami
 {{{cvtag(Trajectory optimisation)}}}
 # {{{cvtag(Model-based reinforcement learning)}}}
 
-*** Teaching Assistant :ignore:
 {{{par-div}}}
+
+*** Teaching Assistant :ignore:
 {{{cvevent(Teaching Assistant, University of Bristol,Sept 2018 -- Ongoing, Bristol\, UK)}}}
 
 Alongside my PhD I have assisted teaching:
@@ -137,6 +153,8 @@ Alongside my PhD I have assisted teaching:
 {{{cvtag(Communication)}}}
 {{{cvtag(Active listening)}}}
 {{{cvtag(Teaching)}}}
+
+{{{par}}}
 
 *** Mott MacDonald :ignore:noexport:
 {{{par-div}}}
@@ -159,7 +177,7 @@ Alongside my PhD I have assisted teaching:
 - Conducted a feasibility study and estimated project costs that informed subsequent action.
 - Located an error and proposed a solution. Communicating this to relevant managers resulted in its successful implementation.
 - Mott MacDonald offered me future employment following my summer placement.
-  
+
 {{{cvtag(Engineering)}}}
 {{{cvtag(Teamwork)}}}
 {{{cvtag(Industry)}}}
@@ -235,6 +253,7 @@ Alongside my PhD I have assisted teaching:
 {{{cvtag(Gaussian processes)}}}
 {{{cvtag(Variational inference)}}}
 
+{{{par}}}
 *** GPJax :ignore:noexport:
 {{{divider}}}
 
@@ -300,6 +319,8 @@ Alongside my PhD I have assisted teaching:
 {{{cvtag(Teaching)}}}
 {{{cvtag(Communication)}}}
 {{{cvtag(Active listening)}}}
+
+{{{par}}}
 
 *** Drivetrain :ignore:noexport:
 {{{par-div}}}
@@ -369,6 +390,8 @@ Each year, as part of Formula Student, students design, build and race a single 
 {{{cvtag(LaTeX)}}}
 {{{cvtag(Org-mode)}}}
 
+{{{par}}}
+
 ** Education
 {{{cvevent(PhD\ in Bayesian Machine Learning for Robotic Control, University of Bristol, Sept 2018 - Ongoing,)}}}
 - \faBook Probabilistic Inference for Learning and Control in Multimodal Dynamical Systems
@@ -425,7 +448,7 @@ Each year, as part of Formula Student, students design, build and race a single 
 # \cvachievement{\faHeartbeat}{British University Snowboard Slalom Champion}{Won all national British university slalom competitions in 2017-2018.}
 # #+end_export
 
-** Achievements 
+** Achievements
 {{{cvachievement(\faTrophy, Full Sporting Colours, Awarded full colours for outstanding achievements in snowboarding. Multiple gold medals in British University Snowboard Championships.)}}}
 
 {{{divider}}}
@@ -443,6 +466,8 @@ Each year, as part of Formula Student, students design, build and race a single 
 {{{divider}}}
 
 {{{cvachievement(\faTrophy, The Duke of Edinburgh's Award, Bronze/Silver/Gold)}}}
+
+{{{par}}}
 
 ** Languages :noexport:
 #+begin_export latex
@@ -469,6 +494,7 @@ Each year, as part of Formula Student, students design, build and race a single 
 \cvref{Prof.\ Arthur Richards}{University of Bristol}{arthur.richards@bristol.ac.uk}
 % {Address Line 1\\Address line 2}
 \divider
+\par
 \cvref{Dr.\ Carl Henrik Ek}{University of Cambridge}{che29@cam.ac.uk}
 % {Address Line 1\\Address line 2}
 #+end_export
@@ -478,6 +504,3 @@ Each year, as part of Formula Student, students design, build and race a single 
 \end{paracol}
 \end{document}
 #+end_export
-
-
-
