@@ -1,20 +1,23 @@
 * Config/Preamble :noexport:
 ** LaTeX Config
-#+BEGIN_SRC emacs-lisp :exports none  :results none :eval always
+#+BEGIN_SRC emacs-lisp :exports none  :results none :eval yes
   (require 'ox-extra)
   (ox-extras-activate '(latex-header-blocks ignore-headlines))
-  ;; (setq org-latex-pdf-process
-  ;;       '("pdflatex -interaction nonstopmode -output-directory %o %f"
-  ;;         "biber %b"
-  ;;         "pdflatex -interaction nonstopmode -output-directory %o %f"
-  ;;         "pdflatex -interaction nonstopmode -output-directory %o %f"))
 
-  (setq org-latex-pdf-process '("%latex -interaction nonstopmode -output-directory %o %f"
-                                "%bib %b"
-                                "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-                                "%latex -shell-escape -interaction nonstopmode -output-directory %o %f")
-        org-latex-compiler "pdflatex")
-  (setq org-latex-with-hyperref nil) ;; stop org adding hypersetup{author..} to latex export
+  (when user/org-latex-preview-feature
+    (setq org-latex-precompile nil))
+
+  (setq org-latex-compiler "pdflatex"
+        org-latex-bib-compiler "biber"
+        org-latex-with-hyperref nil)
+
+  (setq org-latex-pdf-process
+        ;; '("./build-cv.sh %f")
+        '("%latex -interaction nonstopmode -output-directory %o %f"
+          "%bib %b"
+          "%latex -interaction nonstopmode -output-directory %o %f"
+          "%latex -interaction nonstopmode -output-directory %o %f"))
+
   ;; (setq org-latex-prefer-user-labels t)
 
   (unless (boundp 'org-latex-classes)
@@ -25,47 +28,48 @@
   (add-to-list 'org-latex-classes
                '("altacv" "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
 
-  % Change the page layout if you need to
-  \\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+    % Change the page layout if you need to
+    \\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
 
-  % Use roboto and lato for fonts
-  \\renewcommand{\\familydefault}{\\sfdefault}
+    % Use roboto and lato for fonts
+    \\renewcommand{\\familydefault}{\\sfdefault}
 
-  % Change the colours if you want to
-  \\definecolor{SlateGrey}{HTML}{2E2E2E}
-  \\definecolor{LightGrey}{HTML}{666666}
-  \\definecolor{DarkPastelRed}{HTML}{450808}
-  \\definecolor{PastelRed}{HTML}{8F0D0D}
-  \\definecolor{GoldenEarth}{HTML}{E7D192}
-  \\colorlet{name}{black}
-  \\colorlet{tagline}{PastelRed}
-  \\colorlet{heading}{DarkPastelRed}
-  \\colorlet{headingrule}{GoldenEarth}
-  \\colorlet{subheading}{PastelRed}
-  \\colorlet{accent}{PastelRed}
-  \\colorlet{emphasis}{SlateGrey}
-  \\colorlet{body}{LightGrey}
+    % Change the colours if you want to
+    \\definecolor{SlateGrey}{HTML}{2E2E2E}
+    \\definecolor{LightGrey}{HTML}{666666}
+    \\definecolor{DarkPastelRed}{HTML}{450808}
+    \\definecolor{PastelRed}{HTML}{8F0D0D}
+    \\definecolor{GoldenEarth}{HTML}{E7D192}
+    \\colorlet{name}{black}
+    \\colorlet{tagline}{PastelRed}
+    \\colorlet{heading}{DarkPastelRed}
+    \\colorlet{headingrule}{GoldenEarth}
+    \\colorlet{subheading}{PastelRed}
+    \\colorlet{accent}{PastelRed}
+    \\colorlet{emphasis}{SlateGrey}
+    \\colorlet{body}{LightGrey}
 
-  % Change some fonts, if necessary
-  \\renewcommand{\\namefont}{\\Huge\\rmfamily\\bfseries}
-  \\renewcommand{\\personalinfofont}{\\footnotesize}
-  \\renewcommand{\\cvsectionfont}{\\LARGE\\rmfamily\\bfseries}
-  \\renewcommand{\\cvsubsectionfont}{\\large\\bfseries}
+    % Change some fonts, if necessary
+    \\renewcommand{\\namefont}{\\Huge\\rmfamily\\bfseries}
+    \\renewcommand{\\personalinfofont}{\\footnotesize}
+    \\renewcommand{\\cvsectionfont}{\\LARGE\\rmfamily\\bfseries}
+    \\renewcommand{\\cvsubsectionfont}{\\large\\bfseries}
 
-  % Change the bullets for itemize and rating marker
-  % for \cvskill if you want to
-  \\renewcommand{\\itemmarker}{{\\small\\textbullet}}
-  \\renewcommand{\\ratingmarker}{\\faCircle}
-  "
+    % Change the bullets for itemize and rating marker
+    % for \cvskill if you want to
+    \\renewcommand{\\itemmarker}{{\\small\\textbullet}}
+    \\renewcommand{\\ratingmarker}{\\faCircle}
+    "
 
                  ("\\cvsection{%s}" . "\\cvsection*{%s}")
                  ("\\cvevent{%s}" . "\\cvevent*{%s}")))
+
   (setq org-latex-packages-alist 'nil)
   (setq org-latex-default-packages-alist
-        '(("rm" "roboto"  t)
+        '(("" "hyperref" t)
+          ("rm" "roboto"  t)
           ("defaultsans" "lato" t)
-          ("" "paracol" t)
-          ))
+          ("" "paracol" t)))
 #+END_SRC
 #+LATEX_CLASS: altacv
 #+LATEX_HEADER: \columnratio{0.6} % Set the left/right column width ratio to 6:4.
@@ -75,7 +79,9 @@
 # #+LATEX_HEADER: \DeclareNameAlias{sortname}{given-family}
 # #+LATEX_HEADER: \addbibresource{aidan.bib}
 # #+LATEX_HEADER: \usepackage{biblatex}
-#+LATEX_HEADER: \usepackage[style=trad-abbrv,sorting=none,sortcites=true,doi=false,url=false,giveninits=true,hyperref]{biblatex}
+#+LATEX_HEADER: \usepackage{hyperref}
+# #+LATEX_HEADER: \usepackage[backend=bibtex,style=trad-abbrv,sorting=none,sortcites=true,doi=false,url=false,giveninits=true]{biblatex}
+#+LATEX_HEADER: \usepackage[backend=biber,style=trad-abbrv,sorting=none,sortcites=true,doi=false,url=false,giveninits=true]{biblatex}
 #+LATEX_HEADER: \DeclareNameAlias{sortname}{given-family}
 #+LATEX_HEADER: \addbibresource{aidan.bib}
 # #+LATEX_HEADER: \usepackage[citestyle=numeric-comp, maxcitenames=1, maxbibnames=4, doi=false, isbn=false, eprint=true, backend=bibtex, hyperref=true, url=false, natbib=true]{biblatex}
