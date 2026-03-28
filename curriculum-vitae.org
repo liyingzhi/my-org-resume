@@ -12,11 +12,12 @@
         org-latex-with-hyperref nil)
 
   (setq org-latex-pdf-process
-        ;; '("./build-cv.sh %f")
-        '("%latex -interaction nonstopmode -output-directory %o %f"
-          "%bib %b"
-          "%latex -interaction nonstopmode -output-directory %o %f"
-          "%latex -interaction nonstopmode -output-directory %o %f"))
+        '("./build-cv.sh %f")
+        ;; '("%latex -interaction nonstopmode -output-directory %o %f"
+        ;;  "%bib %b"
+        ;;  "%latex -interaction nonstopmode -output-directory %o %f"
+        ;;  "%latex -interaction nonstopmode -output-directory %o %f")
+        )
 
   ;; (setq org-latex-prefer-user-labels t)
 
